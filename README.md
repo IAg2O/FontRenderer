@@ -11,7 +11,8 @@
 
 ```java
 
-private final static GLFontRenderer renderer = new GLFontRenderer(yourFont);
+private final static Backend backend = new OpenGLBackedn();
+private final static GLFontRenderer renderer = new GLFontRenderer(backend, yourFont);
 
 renderer.beginTexture();
 
@@ -34,7 +35,8 @@ Usage:
 
 ```java
 
-private final static GLFontRenderer renderer = new GLFontRenderer(yourFont);
+private final static Backend backend = new OpenGLBackedn();
+private final static GLFontRenderer renderer = new GLFontRenderer(backend, yourFont);
 
 renderer.beginTexture();
 
