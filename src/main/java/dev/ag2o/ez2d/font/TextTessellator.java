@@ -52,13 +52,13 @@ public class TextTessellator {
         vertexBuffer.flip();
 
         this.backend.beginVertexArray();
-
         this.backend.vertexUpload(vertexBuffer);
+
         this.backend.vertexPointer(0, 2, XYUV * C);
         this.backend.texCoordPointer(2, 2, XYUV * C);
         this.backend.colorPointer(4, 4, XYUV * C);
 
-        this.backend.endVertexArray(0, charCount * 4);
+        backend.endVertexArray(0, charCount * 6);
 
         vertexBuffer.clear();
         charCount = 0;
