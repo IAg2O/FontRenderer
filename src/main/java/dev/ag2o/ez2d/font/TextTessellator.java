@@ -1,7 +1,7 @@
-package dev.ag2o.font;
+package dev.ag2o.ez2d.font;
 
+import dev.ag2o.ez2d.backend.Backend;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.nio.FloatBuffer;
@@ -13,6 +13,12 @@ public class TextTessellator {
     private static final int C = 8;
 
     private final FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(MAX_CHARS * XYUV * C);
+    private final Backend backend;
+
+    public TextTessellator(Backend backend) {
+        this.backend = backend;
+    }
+
     private int charCount = 0;
 
     public void pushChar(float x, float y, CharData data, float imageSize, Color color) {
@@ -45,24 +51,13 @@ public class TextTessellator {
 
         vertexBuffer.flip();
 
-        GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
-        GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-        GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
+        this.backend.beginVertexArray();
 
-        vertexBuffer.position(0);
-        GL11.glVertexPointer(2, GL11.GL_FLOAT, XYUV * C, vertexBuffer);
+        this.backend.vertexPointer(vertexBuffer, 0, 2, XYUV * C);
+        this.backend.texCoordPointer(vertexBuffer, 2, 2, XYUV * C);
+        this.backend.colorPointer(vertexBuffer, 4, 4, XYUV * C);
 
-        vertexBuffer.position(2);
-        GL11.glTexCoordPointer(2, GL11.GL_FLOAT, XYUV * C, vertexBuffer);
-
-        vertexBuffer.position(4);
-        GL11.glColorPointer(4, GL11.GL_FLOAT, XYUV * C, vertexBuffer);
-
-        GL11.glDrawArrays(GL11.GL_QUADS, 0, charCount * 4);
-
-        GL11.glDisableClientState(GL11.GL_COLOR_ARRAY);
-        GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
-        GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+        this.backend.endVertexArray(0, charCount * 4);
 
         vertexBuffer.clear();
         charCount = 0;

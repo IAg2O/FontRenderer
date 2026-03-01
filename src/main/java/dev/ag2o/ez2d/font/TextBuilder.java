@@ -1,4 +1,4 @@
-package dev.ag2o.font;
+package dev.ag2o.ez2d.font;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -11,8 +11,8 @@ import java.util.Map;
 public class TextBuilder {
     private final Map<Character, CharData> charMap = new HashMap<>();
     private final BufferedImage bufferedImage;
-    protected final int imageSize;
-    protected final Font font;
+    private final int imageSize;
+    private final Font font;
 
     private int currentX = 2;
     private int currentY = 2;
@@ -81,5 +81,9 @@ public class TextBuilder {
 
     public CharData charData(char c) {
         return charMap.get(c);
+    }
+
+    public int imageSize() {
+        return imageSize;
     }
 }
