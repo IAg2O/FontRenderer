@@ -14,12 +14,8 @@
 private final static Backend backend = new OpenGLBackedn();
 private final static GLFontRenderer renderer = new GLFontRenderer(backend, yourFont);
 
-renderer.beginTexture();
-
 renderer.pushText("Text", x, y, Color.BLACK);
-renderer.flush();
-
-renderer.end();
+renderer.draw();
 
 ```
 
@@ -38,12 +34,8 @@ Usage:
 private final static Backend backend = new OpenGLBackedn();
 private final static GLFontRenderer renderer = new GLFontRenderer(backend, yourFont);
 
-renderer.beginTexture();
-
 renderer.pushText("Text", x, y, Color.BLACK);
-renderer.flush();
-
-renderer.end();
+renderer.draw();
 
 ```
 
