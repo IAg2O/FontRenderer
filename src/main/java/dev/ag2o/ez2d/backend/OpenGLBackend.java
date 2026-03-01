@@ -2,14 +2,17 @@ package dev.ag2o.ez2d.backend;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL30;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
 public final class OpenGLBackend extends Backend {
+    private final int vaoId;
     private final int vboId;
 
     public OpenGLBackend() {
+        vaoId = GL30.glGenVertexArrays();
         vboId = GL15.glGenBuffers();
     }
 
@@ -55,6 +58,7 @@ public final class OpenGLBackend extends Backend {
 
     @Override
     public void beginVertexArray() {
+        GL30.glBindVertexArray(vaoId);
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId);
 
         GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
