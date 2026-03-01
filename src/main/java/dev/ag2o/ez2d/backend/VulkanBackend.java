@@ -16,7 +16,7 @@ public final class VulkanBackend extends Backend {
     }
 
     @Override
-    public void begin() {
+    public void begin(int width, int height) {
     }
 
     @Override

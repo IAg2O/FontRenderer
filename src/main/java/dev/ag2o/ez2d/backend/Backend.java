@@ -6,7 +6,7 @@ import java.nio.FloatBuffer;
 public sealed abstract class Backend permits OpenGLBackend, VulkanBackend {
     public abstract int genTextures();
     public abstract void bindTexture(int texture);
-    public abstract void begin();
+    public abstract void begin(int width, int height);
     public abstract void end();
     public abstract void texParameteri();
     public abstract void texImage2D(int width, int height, ByteBuffer buffer);

@@ -1,17 +1,26 @@
 package dev.ag2o.ez2d.backend;
 
+import dev.ag2o.ez2d.backend.shader.ShaderProgram;
+import dev.ag2o.ez2d.backend.shader.Shaders;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
+@SuppressWarnings("SpellCheckingInspection")
 public final class OpenGLBackend extends Backend {
+    private final ShaderProgram shader;
+    private final int uProjectionLoc;
+
     private final int vaoId;
     private final int vboId;
 
     public OpenGLBackend() {
+        shader = new ShaderProgram(Shaders.vertex_shader, Shaders.fragment_shader);
+        uProjectionLoc = shader.getUniformLocation("uProjection");
         vaoId = GL30.glGenVertexArrays();
         vboId = GL15.glGenBuffers();
     }
@@ -27,17 +36,26 @@ public final class OpenGLBackend extends Backend {
     }
 
     @Override
-    public void begin() {
-        GL11.glPushMatrix();
+    public void begin(int width, int height) {
+        shader.bind();
+
+        float[] ortho = new float[16];
+        ortho[0] = 2.0f / width;
+        ortho[5] = -2.0f / height;
+        ortho[10] = -1.0f;
+        ortho[12] = -1.0f;
+        ortho[13] = 1.0f;
+        ortho[15] = 1.0f;
+
+        GL20.glUniformMatrix4fv(uProjectionLoc, false, ortho);
+
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
     }
 
     @Override
     public void end() {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glPopMatrix();
     }
 
     @Override
@@ -58,12 +76,13 @@ public final class OpenGLBackend extends Backend {
 
     @Override
     public void beginVertexArray() {
+        shader.bind();
         GL30.glBindVertexArray(vaoId);
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId);
 
-        GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
-        GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-        GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
+        GL20.glEnableVertexAttribArray(0);
+        GL20.glEnableVertexAttribArray(1);
+        GL20.glEnableVertexAttribArray(2);
     }
 
     @Override
@@ -74,29 +93,27 @@ public final class OpenGLBackend extends Backend {
     @Override
     public void vertexPointer(int newPosition, int size, int stride) {
         long offset = (long) newPosition * 4;
-        GL11.glVertexPointer(size, GL11.GL_FLOAT, stride, offset);
+        GL20.glVertexAttribPointer(0, size, GL11.GL_FLOAT, false, stride, offset);
     }
 
     @Override
     public void texCoordPointer(int newPosition, int size, int stride) {
         long offset = (long) newPosition * 4;
-        GL11.glTexCoordPointer(size, GL11.GL_FLOAT, stride, offset);
+        GL20.glVertexAttribPointer(1, size, GL11.GL_FLOAT, false, stride, offset);
     }
 
     @Override
     public void colorPointer(int newPosition, int size, int stride) {
         long offset = (long) newPosition * 4;
-        GL11.glColorPointer(size, GL11.GL_FLOAT, stride, offset);
+        GL20.glVertexAttribPointer(2, size, GL11.GL_FLOAT, false, stride, offset);
     }
 
     @Override
     public void endVertexArray(int first, int count) {
         GL11.glDrawArrays(GL11.GL_QUADS, first, count);
 
+        GL30.glBindVertexArray(0);
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-
-        GL11.glDisableClientState(GL11.GL_COLOR_ARRAY);
-        GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
-        GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+        shader.unbind();
     }
 }

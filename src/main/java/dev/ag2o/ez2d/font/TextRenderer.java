@@ -54,9 +54,7 @@ public class TextRenderer extends TextBuilder {
     }
 
     public void draw() {
-        backend.begin();
         backend.bindTexture(textureId);
         tessellator.flush();
-        backend.end();
     }
 }
