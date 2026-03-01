@@ -45,17 +45,22 @@ public final class VulkanBackend extends Backend {
     }
 
     @Override
-    public void vertexPointer(FloatBuffer buffer, int newPosition, int size, int stride) {
+    public void vertexUpload(FloatBuffer buffer) {
 
     }
 
     @Override
-    public void texCoordPointer(FloatBuffer buffer, int newPosition, int size, int stride) {
+    public void vertexPointer(int newPosition, int size, int stride) {
 
     }
 
     @Override
-    public void colorPointer(FloatBuffer buffer, int newPosition, int size, int stride) {
+    public void texCoordPointer(int newPosition, int size, int stride) {
+
+    }
+
+    @Override
+    public void colorPointer(int newPosition, int size, int stride) {
 
     }
 

@@ -53,9 +53,10 @@ public class TextTessellator {
 
         this.backend.beginVertexArray();
 
-        this.backend.vertexPointer(vertexBuffer, 0, 2, XYUV * C);
-        this.backend.texCoordPointer(vertexBuffer, 2, 2, XYUV * C);
-        this.backend.colorPointer(vertexBuffer, 4, 4, XYUV * C);
+        this.backend.vertexUpload(vertexBuffer);
+        this.backend.vertexPointer(0, 2, XYUV * C);
+        this.backend.texCoordPointer(2, 2, XYUV * C);
+        this.backend.colorPointer(4, 4, XYUV * C);
 
         this.backend.endVertexArray(0, charCount * 4);
 

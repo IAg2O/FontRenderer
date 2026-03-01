@@ -1,11 +1,18 @@
 package dev.ag2o.ez2d.backend;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL15;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
 public final class OpenGLBackend extends Backend {
+    private final int vboId;
+
+    public OpenGLBackend() {
+        vboId = GL15.glGenBuffers();
+    }
+
     @Override
     public int genTextures() {
         return GL11.glGenTextures();
@@ -48,32 +55,41 @@ public final class OpenGLBackend extends Backend {
 
     @Override
     public void beginVertexArray() {
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId);
+
         GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
         GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
         GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
     }
 
     @Override
-    public void vertexPointer(FloatBuffer buffer, int newPosition, int size, int stride) {
-        buffer.position(newPosition);
-        GL11.glVertexPointer(size, GL11.GL_FLOAT, stride, buffer);
+    public void vertexUpload(FloatBuffer buffer) {
+        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_DYNAMIC_DRAW);
     }
 
     @Override
-    public void texCoordPointer(FloatBuffer buffer, int newPosition, int size, int stride) {
-        buffer.position(newPosition);
-        GL11.glTexCoordPointer(size, GL11.GL_FLOAT, stride, buffer);
+    public void vertexPointer(int newPosition, int size, int stride) {
+        long offset = (long) newPosition * 4;
+        GL11.glVertexPointer(size, GL11.GL_FLOAT, stride, offset);
     }
 
     @Override
-    public void colorPointer(FloatBuffer buffer, int newPosition, int size, int stride) {
-        buffer.position(newPosition);
-        GL11.glColorPointer(size, GL11.GL_FLOAT, stride, buffer);
+    public void texCoordPointer(int newPosition, int size, int stride) {
+        long offset = (long) newPosition * 4;
+        GL11.glTexCoordPointer(size, GL11.GL_FLOAT, stride, offset);
+    }
+
+    @Override
+    public void colorPointer(int newPosition, int size, int stride) {
+        long offset = (long) newPosition * 4;
+        GL11.glColorPointer(size, GL11.GL_FLOAT, stride, offset);
     }
 
     @Override
     public void endVertexArray(int first, int count) {
         GL11.glDrawArrays(GL11.GL_QUADS, first, count);
+
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 
         GL11.glDisableClientState(GL11.GL_COLOR_ARRAY);
         GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
